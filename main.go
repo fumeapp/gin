@@ -14,28 +14,28 @@ import (
 var ginLambda *ginadapter.GinLambdaV2
 
 type Options struct {
-	dev bool // development mode
-	port int // port to run on (default 8080)
+	Dev bool // development mode
+	Port int // port to run on (default 8080)
 }
 
 func Start(routes *gin.Engine, options *Options) {
 
 	defaults := &Options{
-		dev: false,
-		port: 8080,
+		Dev: false,
+		Port: 8080,
 	}
 
-	if options.dev {
-		defaults.dev = options.dev
+	if options.Dev {
+		defaults.Dev = options.Dev
 	}
 
-	if options.port != 0 {
-		defaults.port = options.port
+	if options.Port != 0 {
+		defaults.Port = options.Port
 	}
 
-	if options.dev {
+	if options.Dev {
 		server := &http.Server{
-			Addr:    fmt.Sprintf(":%d", defaults.port),
+			Addr:    fmt.Sprintf(":%d", defaults.Port),
 			Handler: routes,
 		}
 		server.ListenAndServe()
