@@ -1,4 +1,4 @@
-package main
+package fume
 
 import (
 	"context"
@@ -17,8 +17,6 @@ type Options struct {
 	dev bool // development mode
 	port int // port to run on (default 8080)
 }
-
-func main() {}
 
 func Start(routes *gin.Engine, options *Options) {
 
