@@ -16,7 +16,7 @@ var ginLambda *ginadapter.GinLambdaV2
 
 type Options struct {
 	// optional - hostname to listen on (default: localhost)
-	Hostname string 
+	Host string 
 	// optional - port to run on (default: 8080)
 	Port int 
 }
@@ -24,19 +24,19 @@ type Options struct {
 func Start(routes *gin.Engine, options Options) {
 
 	defaults := &Options{
-		Hostname: "localhost",
+		Host: "localhost",
 		Port: 8080,
 	}
 
 	if options.Port != 0 { defaults.Port = options.Port }
-	if options.Hostname != "" { defaults.Hostname = options.Hostname }
+	if options.Host != "" { defaults.Host = options.Host }
 
 	if os.Getenv("_HANDLER") != "" {
 		ginLambda = ginadapter.NewV2(routes)
 		lambda.Start(Handler)
 	} else {
 		server := &http.Server{
-			Addr:    fmt.Sprintf("%s:%d", defaults.Hostname, defaults.Port),
+			Addr:    fmt.Sprintf("%s:%d", defaults.Host, defaults.Port),
 			Handler: routes,
 		}
 		server.ListenAndServe()
