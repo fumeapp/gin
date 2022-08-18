@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -14,26 +15,20 @@ import (
 var ginLambda *ginadapter.GinLambdaV2
 
 type Options struct {
-	Dev bool // development mode
 	Port int // port to run on (default 8080)
 }
 
 func Start(routes *gin.Engine, options *Options) {
 
 	defaults := &Options{
-		Dev: false,
 		Port: 8080,
-	}
-
-	if options.Dev {
-		defaults.Dev = options.Dev
 	}
 
 	if options.Port != 0 {
 		defaults.Port = options.Port
 	}
 
-	if options.Dev {
+	if os.Getenv("_HANDLER") != "" {
 		server := &http.Server{
 			Addr:    fmt.Sprintf(":%d", defaults.Port),
 			Handler: routes,
