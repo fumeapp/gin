@@ -15,28 +15,31 @@ import (
 var ginLambda *ginadapter.GinLambdaV2
 
 type Options struct {
-	Port int // port to run on (default 8080)
+	// optional - hostname to listen on (default: localhost)
+	Hostname string 
+	// optional - port to run on (default: 8080)
+	Port int 
 }
 
-func Start(routes *gin.Engine, options *Options) {
+func Start(routes *gin.Engine, options Options) {
 
 	defaults := &Options{
+		Hostname: "localhost",
 		Port: 8080,
 	}
 
-	if options.Port != 0 {
-		defaults.Port = options.Port
-	}
+	if options.Port != 0 { defaults.Port = options.Port }
+	if options.Hostname != "" { defaults.Hostname = options.Hostname }
 
 	if os.Getenv("_HANDLER") != "" {
+		ginLambda = ginadapter.NewV2(routes)
+		lambda.Start(Handler)
+	} else {
 		server := &http.Server{
-			Addr:    fmt.Sprintf(":%d", defaults.Port),
+			Addr:    fmt.Sprintf("%s:%d", defaults.Hostname, defaults.Port),
 			Handler: routes,
 		}
 		server.ListenAndServe()
-	} else {
-		ginLambda = ginadapter.NewV2(routes)
-		lambda.Start(Handler)
 	}
 }
 
